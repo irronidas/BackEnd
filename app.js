@@ -2,8 +2,10 @@
 
 var express = require ('express');
 var app = express();
+
+require ('dotenv').config();
 var mongoose = require ('mongoose');
-var port = process.env.PORT || 4201;
+//var port = process.env.PORT || 4201;
 
 var admin_route = require('./routes/admin');
 var client_route = require('./routes/client');
@@ -12,17 +14,22 @@ var producto_route = require('./routes/producto');
 //var cors = require('cors')
 
 // ecommerce nombre de mi BD en mongoDB
-mongoose.set('strictQuery', false)
-mongoose.connect('mongodb+srv://jaimebustamante300:ikki2008@clusterecommerce.kmlhkjj.mongodb.net/?retryWrites=true&w=majority', {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-  })
-.then(db => console.log('BD conectada'))
-.catch (error => console.log(error))
+var mongoURI = process.env.MONGODB_URI;
 
-app.listen(port, () => {
-    console.log('Servidor iniciado en el puerto '+ port);
+mongoose.connect(mongoURI,{useNewUrlParser:true, useUnifiedTopology:true})
+.then(()=>{
+  console.log('conexion a bd atlas exitosa');
+  app.listen(4201,()=>{
+    console.log('servideor escuchando 4201')
   });
+})
+.catch(err=>{
+  console.error('no se puedo conectar', err)
+});
+
+//app.listen(port, () => {
+//    console.log('Servidor iniciado en el puerto '+ port);
+  //});
 
 app.use(express.urlencoded({extended:true}));
 app.use(express.json({limit:'50mb', extended:true}));
